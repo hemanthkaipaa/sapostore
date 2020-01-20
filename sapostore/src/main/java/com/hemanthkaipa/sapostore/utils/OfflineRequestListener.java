@@ -1,23 +1,19 @@
 package com.hemanthkaipa.sapostore.utils;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-
 import com.hemanthkaipa.sapostore.exceptions.OfflineODataStoreException;
 import com.sap.smp.client.odata.exception.ODataException;
 import com.sap.smp.client.odata.store.ODataRequestExecution;
 import com.sap.smp.client.odata.store.ODataRequestListener;
 
 public class OfflineRequestListener implements ODataRequestListener {
-    private UIListener uiListener;
+    private SAPUIListener SAPUIListener;
     private int operation;
     private String ENTITY_SET="";
 
-    public OfflineRequestListener(int operation, UIListener uiListener, String collectionName) {
+    public OfflineRequestListener(int operation, SAPUIListener SAPUIListener, String collectionName) {
         super();
         this.operation = operation;
-        this.uiListener = uiListener;
+        this.SAPUIListener = SAPUIListener;
         this.ENTITY_SET = collectionName;
 
     }
@@ -42,7 +38,7 @@ public class OfflineRequestListener implements ODataRequestListener {
     @Override
     public void requestServerResponse(ODataRequestExecution oDataRequestExecution) {
         try {
-            uiListener.onRequestSuccess(operation,oDataRequestExecution);
+            SAPUIListener.onRequestSuccess(operation,oDataRequestExecution);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -50,11 +46,15 @@ public class OfflineRequestListener implements ODataRequestListener {
 
     @Override
     public void requestFailed(ODataRequestExecution oDataRequestExecution, ODataException e) {
-        uiListener.onRequestError(operation,e,oDataRequestExecution);
+        SAPUIListener.onRequestError(operation,e,oDataRequestExecution);
     }
 
     @Override
     public void requestFinished(ODataRequestExecution oDataRequestExecution) {
-
+        try {
+            SAPUIListener.onRequestFinished(oDataRequestExecution);
+        } catch (ODataException | OfflineODataStoreException e) {
+            e.printStackTrace();
+        }
     }
 }

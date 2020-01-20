@@ -13,7 +13,7 @@ import com.hemanthkaipa.sapostore.exceptions.OfflineODataStoreException;
 import com.hemanthkaipa.sapostore.utils.ErrorListener;
 import com.hemanthkaipa.sapostore.utils.OfflineRequestListener;
 import com.hemanthkaipa.sapostore.utils.Operation;
-import com.hemanthkaipa.sapostore.utils.UIListener;
+import com.hemanthkaipa.sapostore.utils.SAPUIListener;
 import com.hemanthkaipa.sapostore.utils.Utils;
 import com.sap.smp.client.odata.ODataDuration;
 import com.sap.smp.client.odata.ODataEntity;
@@ -68,7 +68,7 @@ public class OfflineUtils<T>{
     private String NAVIGATION_PROPERTY_ENTITY_TYPE;
     @Deprecated
     private List<T> navigationPropertiesList;
-    private UIListener uiListener;
+    private SAPUIListener SAPUIListener;
     @Deprecated
     private ArrayList<ODataTable<String, String, ODataMetaProperty.EDMType>> oDataTables;
     private boolean isCreate;
@@ -96,7 +96,7 @@ public class OfflineUtils<T>{
         private ODataOfflineStore offlineStore;
         @Deprecated
         private Hashtable<String, ODataProperty> oDataProperties = new Hashtable<>();
-        private UIListener uiListener;
+        private SAPUIListener SAPUIListener;
         @Deprecated
         private ArrayList<ODataTable<String, String, ODataMetaProperty.EDMType>> oDataTables;
         private ErrorListener errorListener;
@@ -132,8 +132,8 @@ public class OfflineUtils<T>{
             return this;
         }
 
-        public ODataOfflineBuilder setUIListener(UIListener uiListener) {
-            this.uiListener = uiListener;
+        public ODataOfflineBuilder setUIListener(SAPUIListener SAPUIListener) {
+            this.SAPUIListener = SAPUIListener;
             return this;
         }
 
@@ -206,7 +206,7 @@ public class OfflineUtils<T>{
             offlineUtils.oDataProperties = this.oDataProperties;
             offlineUtils.ENTITY_SET = this.ENTITY_SET;
             offlineUtils.ENTITY_TYPE = this.ENTITY_TYPE;
-            offlineUtils.uiListener = this.uiListener;
+            offlineUtils.SAPUIListener = this.SAPUIListener;
             offlineUtils.oDataTables =this.oDataTables;
             offlineUtils.errorListener =errorListener;
             offlineUtils.isCreate =this.isCreate;
@@ -239,7 +239,7 @@ public class OfflineUtils<T>{
             OfflineUtils<T> offlineUtils = new OfflineUtils<T>();
             offlineUtils.ENTITY_SET = this.ENTITY_SET;
             offlineUtils.ENTITY_TYPE = this.ENTITY_TYPE;
-            offlineUtils.uiListener = this.uiListener;
+            offlineUtils.SAPUIListener = this.SAPUIListener;
             offlineUtils.isETAG = this.isETAG;
             offlineUtils.headerPropertyObject = headerPayLoadObject;
             offlineUtils.QUERY = QUERY;
@@ -280,7 +280,7 @@ public class OfflineUtils<T>{
         }else{
             if (isErrorOccurred) {
                 if (isCreate) {
-                    offlineSimpleCreate(ENTITY_SET,oDataEntity,uiListener);
+                    offlineSimpleCreate(ENTITY_SET,oDataEntity, SAPUIListener);
                 }else if(isUpdate){
                     if (RESOURCE_PATH !=null&&EDIT_RESOURCE_PATH!=null) {
                         oDataEntity.setResourcePath(RESOURCE_PATH, EDIT_RESOURCE_PATH);
@@ -288,7 +288,7 @@ public class OfflineUtils<T>{
                     if (ETAG!=null) {
                         oDataEntity.setEtag(ETAG);
                     }
-                    offlineSimpleUpdate(ENTITY_SET,oDataEntity,uiListener);
+                    offlineSimpleUpdate(ENTITY_SET,oDataEntity, SAPUIListener);
                 }else if(isDelete){
                     if (RESOURCE_PATH !=null&&EDIT_RESOURCE_PATH!=null) {
                         oDataEntity.setResourcePath(RESOURCE_PATH, EDIT_RESOURCE_PATH);
@@ -296,7 +296,7 @@ public class OfflineUtils<T>{
                     if (ETAG!=null) {
                         oDataEntity.setEtag(ETAG);
                     }
-                    offlineSimpleDelete(ENTITY_SET,oDataEntity,uiListener);
+                    offlineSimpleDelete(ENTITY_SET,oDataEntity, SAPUIListener);
                 }
             }
         }
@@ -373,9 +373,9 @@ public class OfflineUtils<T>{
             }else{
                 if (isErrorOccurred) {
                     if (isCreate) {
-                        offlineSimpleCreate(ENTITY_SET,oDataEntity,uiListener);
+                        offlineSimpleCreate(ENTITY_SET,oDataEntity, SAPUIListener);
                     }else if(isUpdate){
-    //                    offlineSimpleUpdate(ENTITY_SET,ENTITY_TYPE,oDataProperties,uiListener);
+    //                    offlineSimpleUpdate(ENTITY_SET,ENTITY_TYPE,oDataProperties,SAPUIListener);
                     }
                 }
             }
@@ -468,9 +468,9 @@ public class OfflineUtils<T>{
         }else{
             if (isErrorOccurred) {
                 if (isCreate) {
-                    offlineSimpleCreate(ENTITY_SET,ENTITY_TYPE,oDataProperties,uiListener);
+                    offlineSimpleCreate(ENTITY_SET,ENTITY_TYPE,oDataProperties, SAPUIListener);
                 }else if(isUpdate){
-                    offlineSimpleUpdate(ENTITY_SET,ENTITY_TYPE,oDataProperties,uiListener);
+                    offlineSimpleUpdate(ENTITY_SET,ENTITY_TYPE,oDataProperties, SAPUIListener);
                 }
             }
         }
@@ -481,11 +481,11 @@ public class OfflineUtils<T>{
      * @param entitySet entitySet name needs to be passed here
      * @param entityType entityType to be passed.
      * @param hashTable this will throw all the available properties belongs to the entity. here we need to pass the string and ODataProperty pair values
-     * @param uiListener this will give error or success listener
+     * @param SAPUIListener this will give error or success listener
      * @throws Exception
      */
     @Deprecated
-    private void offlineSimpleCreate(@NonNull String entitySet, @NonNull String entityType, @NonNull Hashtable<String, ODataProperty> hashTable, @NonNull UIListener uiListener) {
+    private void offlineSimpleCreate(@NonNull String entitySet, @NonNull String entityType, @NonNull Hashtable<String, ODataProperty> hashTable, @NonNull SAPUIListener SAPUIListener) {
         ODataEntity oDataEntity = new ODataEntityDefaultImpl(Utils.getNameSpace(offlineStore)+entityType);
         try {
             offlineStore.allocateProperties(oDataEntity, ODataStore.PropMode.Keys).getProperties().putAll(hashTable);
@@ -493,18 +493,18 @@ public class OfflineUtils<T>{
             e.printStackTrace();
         }
         if (offlineStore != null) {
-            offlineStore.scheduleCreateEntity(oDataEntity, entitySet, new OfflineRequestListener(Operation.Create.getValue(), uiListener, entitySet), null);
+            offlineStore.scheduleCreateEntity(oDataEntity, entitySet, new OfflineRequestListener(Operation.Create.getValue(), SAPUIListener, entitySet), null);
         }
     }
     /**
      * This is simple create method for offline Mode.
      * @param entitySet entitySet name needs to be passed here
-     * @param uiListener this will give error or success listener
+     * @param SAPUIListener this will give error or success listener
      * @throws Exception
      */
-    private void offlineSimpleCreate(@NonNull String entitySet, @NonNull ODataEntity oDataEntity, @NonNull UIListener uiListener) {
+    private void offlineSimpleCreate(@NonNull String entitySet, @NonNull ODataEntity oDataEntity, @NonNull SAPUIListener SAPUIListener) {
         if (offlineStore != null) {
-            offlineStore.scheduleCreateEntity(oDataEntity, entitySet, new OfflineRequestListener(Operation.Create.getValue(), uiListener, entitySet), null);
+            offlineStore.scheduleCreateEntity(oDataEntity, entitySet, new OfflineRequestListener(Operation.Create.getValue(), SAPUIListener, entitySet), null);
         }
     }
 
@@ -512,22 +512,22 @@ public class OfflineUtils<T>{
      * This is simple update method for offline Mode.
      * @param entitySet  entitySet name needs to be passed here
      * @param oDataEntity  entityName name needs to be passed here
-     * @param uiListener this will give error or success listener
+     * @param SAPUIListener this will give error or success listener
      */
-    private void offlineSimpleUpdate(@NonNull String entitySet, @NonNull ODataEntity oDataEntity, @NonNull UIListener uiListener) {
+    private void offlineSimpleUpdate(@NonNull String entitySet, @NonNull ODataEntity oDataEntity, @NonNull SAPUIListener SAPUIListener) {
         if (offlineStore != null) {
-            offlineStore.scheduleUpdateEntity(oDataEntity, new OfflineRequestListener(Operation.Update.getValue(), uiListener, entitySet), null);
+            offlineStore.scheduleUpdateEntity(oDataEntity, new OfflineRequestListener(Operation.Update.getValue(), SAPUIListener, entitySet), null);
         }
     }
     /**
      * This is simple update method for offline Mode.
      * @param entitySet  entitySet name needs to be passed here
      * @param oDataEntity  entityName name needs to be passed here
-     * @param uiListener this will give error or success listener
+     * @param SAPUIListener this will give error or success listener
      */
-    private void offlineSimpleDelete(@NonNull String entitySet, @NonNull ODataEntity oDataEntity, @NonNull UIListener uiListener) {
+    private void offlineSimpleDelete(@NonNull String entitySet, @NonNull ODataEntity oDataEntity, @NonNull SAPUIListener SAPUIListener) {
         if (offlineStore != null) {
-            offlineStore.scheduleDeleteEntity(oDataEntity, new OfflineRequestListener(Operation.Delete.getValue(), uiListener, entitySet), null);
+            offlineStore.scheduleDeleteEntity(oDataEntity, new OfflineRequestListener(Operation.Delete.getValue(), SAPUIListener, entitySet), null);
         }
     }
 
@@ -536,11 +536,11 @@ public class OfflineUtils<T>{
      * @param entitySet entitySet name needs to be passed here
      * @param entityType entityType to be passed.
      * @param hashTable this will throw all the available properties belongs to the entity. here we need to pass the string and ODataProperty pair values
-     * @param uiListener this will give error or success listener
+     * @param SAPUIListener this will give error or success listener
      * @throws Exception
      */
     @Deprecated
-    private void offlineSimpleUpdate(@NonNull String entitySet, @NonNull String entityType, @NonNull Hashtable<String, ODataProperty> hashTable, @NonNull UIListener uiListener) {
+    private void offlineSimpleUpdate(@NonNull String entitySet, @NonNull String entityType, @NonNull Hashtable<String, ODataProperty> hashTable, @NonNull SAPUIListener SAPUIListener) {
         ODataEntity oDataEntity = new ODataEntityDefaultImpl(Utils.getNameSpace(offlineStore)+entityType);
         try {
             offlineStore.allocateProperties(oDataEntity, ODataStore.PropMode.Keys).getProperties().putAll(hashTable);
@@ -554,7 +554,7 @@ public class OfflineUtils<T>{
             e.printStackTrace();
         }
         if (offlineStore != null) {
-            offlineStore.scheduleUpdateEntity(oDataEntity,new OfflineRequestListener(Operation.Update.getValue(), uiListener, entitySet), null);
+            offlineStore.scheduleUpdateEntity(oDataEntity,new OfflineRequestListener(Operation.Update.getValue(), SAPUIListener, entitySet), null);
         }
     }
 
