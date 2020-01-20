@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 28
     buildToolsVersion "29.0.0"
 
 
     defaultConfig {
         minSdkVersion 22
-        targetSdkVersion 29
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -65,7 +65,7 @@ dependencies {
     implementation(name: 'SupportabilityFacade-4.1.5', ext: 'aar')
     implementation(name: 'odataoffline-android-4.1.8', ext: 'aar')
     implementation 'com.google.guava:guava:28.0-jre'
-
+    implementation 'com.github.hemanthkaipaa:sapostore:1.0.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
