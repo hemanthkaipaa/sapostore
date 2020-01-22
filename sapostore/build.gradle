@@ -41,30 +41,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation files('libs/slf4j-api-1.7.25.jar')
-    implementation files('libs/jdeferred-core-1.2.6.jar')
-    implementation files('libs/gson-2.2.4.jar')
-    implementation files('libs/bcprov-jdk15on-1.60.jar')
-    implementation files('libs/bcpkix-jdk15on-1.60.jar')
-//    implementation files('libs/annotations-16.0.3.jar')
-
-    implementation(name: 'CDSProvider-4.1.5', ext: 'aar')
-    implementation(name: 'ClientLog-4.1.5', ext: 'aar')
-    implementation(name: 'CommonCertificateProvider-4.1.5', ext: 'aar')
-    implementation(name: 'DataVaultLib-4.1.5', ext: 'aar')
-    implementation(name: 'E2ETrace-4.1.5', ext: 'aar')
-    implementation(name: 'Federation-4.1.5', ext: 'aar')
-    implementation(name: 'FederationProvider-4.1.5', ext: 'aar')
-    implementation(name: 'HttpConvAuthFlows-4.1.5', ext: 'aar')
-    implementation(name: 'HttpConversation-4.1.5', ext: 'aar')
-    implementation(name: 'jdeferred-android-aar-1.2.6', ext: 'aar')
-    implementation(name: 'MobilePlace-4.1.5', ext: 'aar')
-    implementation(name: 'ODataAPI-4.1.5', ext: 'aar')
-    implementation(name: 'ODataOnlineCore-4.1.5', ext: 'aar')
-    implementation(name: 'SmpClient-4.1.5', ext: 'aar')
-    implementation(name: 'SupportabilityFacade-4.1.5', ext: 'aar')
     implementation(name: 'odataoffline-android-4.1.8', ext: 'aar')
-    implementation 'com.google.guava:guava:28.0-jre'
+    implementation(name: 'ODataAPI-4.1.5', ext: 'aar')
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
