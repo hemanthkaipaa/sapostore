@@ -1,0 +1,5 @@
+install:
+  - FILE="-Dfile=libs\ODataAPI-4.1.5.aar"
+  - FILES="-Dfile=libs\odataoffline-android-4.1.8.aar"
+  - mvn install:install-file $FILE -DgroupId=com.github.user -DartifactId=repo -Dversion=1.0 -Dpackaging=aar -DgeneratePom=true
+  - mvn install:install-file $FILES -DgroupId=com.github.user -DartifactId=repo2 -Dversion=1.0 -Dpackaging=aar -DgeneratePom=true
